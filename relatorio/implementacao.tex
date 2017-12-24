@@ -3,7 +3,133 @@
 Foram considerados dois casos: caso em que $K_p$ é desconehcido; e caso em que
 todos os parâmetros da planta são desconhecidos.
 
-\subsection{Caso onde apenas $K_p$ é desconhecido}
+\subsection{Caso em que apenas $K_p$ é desconhecido}
+
+Consideremos a planta descrita pela eq.~\ref{eq:P}. A equação ideal para o
+controlador 2DOF poode ser computada pela equação do erro eq.~\ref{eq:erro}:
+
+\begin{align*}
+u^* &=  \theta_1^{*\intercal}\omega_1 + \theta_2^{*\intercal}\omega_2 +
+\theta_3y + \theta_4r \\
+\omega_1 &= \frac{u^*}{\Lambda} \\
+\omega_2 &=  \frac{y}{\Lambda} \\
+\left(I - \theta_1^{*\intercal}\Lambda^{-1}\right)u^* &=
+\theta_2^{*\intercal}\Lambda^{-1}y + \theta_3 y + \theta_4 r 
+\end{align*}
+
+Temos que: 
+
+\begin{align*}
+\frac{1}{\Lambda(s)} &= \begin{bmatrix}
+\frac{1}{(s+\lambda_f)} & 0\\
+0 & \frac{1}{(s+\lambda_f)}
+\end{bmatrix}
+\end{align*}
+
+e
+
+\begin{align*}
+M(s) &= \begin{bmatrix}
+\frac{\lambda^2}{(s+\lambda)^2} & 0\\
+0 & \frac{\lambda^2}{(s+\lambda)^2}
+\end{bmatrix}
+\end{align*}
+
+Voltando à equação da planta:
+
+\begin{align*}
+y &= PK_pu \\
+\left(I - \theta_1^{*\intercal}\Lambda^{-1}\right)y &= \left(I -
+\theta_1^{*\intercal}\Lambda^{-1}\right)P\bar{u}\\
+\end{align*}
+
+Como $P(s)$ é diagonal, temos $AP = PA$ (comuta). E $y = y_m$, logo:
+
+\begin{align*}
+\left(I - \theta_1^{*\intercal}\Lambda^{-1}\right)y_m &= P\left(I -
+\theta_1^{*\intercal}\Lambda^{-1}\right)\bar{u}\\
+\left(I - \theta_1^{*\intercal}\Lambda^{-1}\right)M(s)r &= P(\theta_2^{*\intercal}\Lambda^{-1}y_m +
+\theta_3 y_m + \theta_4 r)\\
+\left(I - \theta_1^{*\intercal}\Lambda^{-1}\right)M(s)r &= P(\theta_2^{*\intercal}\Lambda^{-1}M(s)r
++ \theta_3 M(s)r + \theta_4 r)\\
+\left(I - \theta_1^{*\intercal}\Lambda^{-1}\right)M(s)r &= P(\theta_2^{*\intercal}\Lambda^{-1}M(s)
++ \theta_3 M(s) + \theta_4)r\\
+\left(I - \theta_1^{*\intercal}\Lambda^{-1}\right)M(s) &= P(\theta_2^{*\intercal}\Lambda^{-1}M(s)
++ \theta_3 M(s) + \theta_4)\\
+\end{align*}
+
+\begin{align*}
+\left(\begin{bmatrix}
+1 & 0\\ 0 & 1
+\end{bmatrix}-\theta_1^{*\intercal}\begin{bmatrix}
+\frac{1}{(s+\lambda_f)} & 0\\ 0 & \frac{1}{(s+\lambda_f)}
+\end{bmatrix}\right)\begin{bmatrix}
+\frac{\lambda^2}{(s+\lambda)^2} & 0\\
+0 & \frac{\lambda^2}{(s+\lambda)^2}
+\end{bmatrix} &= \\
+\begin{bmatrix}
+\frac{1}{s^2} & 0\\0 & \frac{1}{s^2}
+\end{bmatrix} \left(\theta_2^{*\intercal}\begin{bmatrix}
+\frac{1}{(s+\lambda_f)} & 0\\ 0 & \frac{1}{(s+\lambda_f)}
+\end{bmatrix}\begin{bmatrix}
+\frac{\lambda^2}{(s+\lambda)^2} & 0\\
+0 & \frac{\lambda^2}{(s+\lambda)^2}
+\end{bmatrix} + \theta_3\begin{bmatrix}
+\frac{\lambda^2}{(s+\lambda)^2} & 0\\
+0 & \frac{\lambda^2}{(s+\lambda)^2}
+\end{bmatrix} + \theta_4\right) & 
+\end{align*}
+
+Como todas as matrizes são diagonais, vamos resolver para o primeiro termo:
+
+\begin{align*}
+\left(1-\frac{\theta_1}{(s+\lambda_f)}\right)\frac{\lambda^2}{(s+\lambda)^2} &=
+\frac{1}{s^2}\left(\frac{\theta_2}{(s+\lambda_f)}\frac{\lambda^2}{(s+\lambda)^2}
++ \theta_3 \frac{\lambda^2}{(s+\lambda)^2} + \theta_4\right)
+\end{align*}
+
+\begin{align*}
+(\lambda^2-\theta_4)s^3 +
+(\lambda^2\lambda_f - \theta_1\lambda^2 - \theta_4(\lambda_f + 2\lambda))s^2 +
+(-\theta_3\lambda^2 - \theta_4(2\lambda\lambda_f+\lambda^2))s +
+(-\theta_2\lambda^2 - \theta_3\lambda^2\lambda_f - \theta_4\lambda^2\lambda_f)
+&= 0
+\end{align*}
+
+Resolvendo para $\theta$, temos:
+
+\begin{align*}
+\theta_4 &= \lambda^2\\
+\theta_1 &= -2\lambda \\ 
+\theta_3 &= -(2\lambda\lambda_f + \lambda^2) \\
+\theta_2 &= 2\lambda\lambda_f^2\\
+\end{align*}
+ 
+Desssa forma, a lei de controle é descrita como:
+
+\begin{align}
+u^* = K_p^{-1}\left[2\lambda\lambda_f^2\Lambda^{-1}y -
+(\lambda^2+2\lambda\lambda_f)y + \lambda^2r\right] - 2\lambda\Lambda^{-1} u
+\end{align}
+
+Utilizando o algoritmo de Monopoli~\ref{eq:monopoli}, temos:
+
+\begin{align}
+u &= \Omega^\intercal\Theta + \zeta^\intercal\dot{\Theta} - 2\lambda\omega_1\\
+\nonumber \Omega_1^\intercal &= \left[\omega^\intercal \quad
+u_2+2\lambda\omega_{1_2}\right] \\
+\Omega_2^\intercal &= \left[\omega^\intercal\right] \\
+\omega &= 2\lambda\lambda_f^2\omega_2 -
+(\lambda^2+2\lambda\lambda_f)y + \lambda^2r \\
+\omega_f &= L^{-1}(s)\omega \\
+\nonumber \zeta_1^\intercal &= \omega_f^{\intercal}\left[I \quad \Theta_2\right]
+\\
+\zeta_2^\intercal &= \omega_f^\intercal \\
+\dot{\Theta} &= -\text{sign}(D)\Gamma\zeta e
+\end{align}
+
+A implementação segue abaixo:
+
 \lstinputlisting[style=myMatlab]{../matlab/1/mrac.m} 
 
 \subsection{Caso onde todos os parâmetros são desconhecidos}

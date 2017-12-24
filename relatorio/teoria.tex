@@ -1,5 +1,5 @@
 %---------------------------------------------------------------------
-\section{MIMO MRAC direto ($n^* = 1$)}
+\section{MIMO MRAC direto ($n^* = 2$)}
 
 O controle adaptativo de modelo de referência (MRAC) é um método de controle
 adaptativo com uma fundação teórica rigorosa e sistemática, possui promissora e
@@ -19,35 +19,30 @@ y(t) = P(s) \, [u(t)],
 
 No caso MIMO, $y(t) \in \mathbb{R}^n$ e $u(t) \in \mathbb{R}^n$ são os
 sinais medidos de saída e entrada do sistema, sendo $P(s) \in
-\mathbb{R}^{n\times n}$ a matriz função de transferência. Podemos exemplificar
-com o caso MIMO de duas entradas e duas saídas:
+\mathbb{R}^{n\times n}$ a matriz função de transferência. Neste trabalho,
+vamos considerar o problema em que a planta possui grau relativo $n^*=2$, para
+o caso MIMO de duas entradas e duas saídas:
 
 \begin{align}\label{eq:P}
 P(s) &= \begin{bmatrix}
-\frac{1}{s+1} & \frac{2}{s+2} \\
-\frac{1}{s^2+5s+4} & \frac{1}{s+3}
+\frac{1}{s^2} & 0 \\
+0 & \frac{1}{s^2}
+\end{bmatrix} K_p \\
+\nonumber K_p &= \begin{bmatrix}
+\text{cos}(\phi) & \text{sin}(\phi)\\
+-h\text{sin}(\phi) & h\text{cos}(\phi)
 \end{bmatrix} 
 \end{align}
 
-Definimos a matriz \textit{interactor} $\xi(s)$ de $P(s)$ tal que:
+Como no caso de grau relativo $n^*=1$, a matriz \textit{interactor}
+de $P(s)$ é tal que:
 
 \begin{align}
 \lim_{s \to \infinity}\xi(s)P(s) &= K_p
 \end{align}
 
-é não singular. No caso de grau relativo 1 ($n^* = 1$), a matriz
-\textit{interactor} é $\xi(s) = sI$. Para o exemplo (eq.~\ref{eq:P}), temos:
-
-\begin{align}
-\nonumber 
-\lim_{s \to \infinity}\xi(s)P(s) &= \begin{bmatrix}
-\frac{s}{s+1} & \frac{2s}{s+2} \\
-\frac{s}{s^2+5s+4} & \frac{s}{s+3}
-\end{bmatrix} = \begin{bmatrix}
-1 & 2\\
-0 & 1
-\end{bmatrix}
-\end{align}
+é não singular. No caso de grau relativo 2 ($n^* = 2$), a matriz
+\textit{interactor} é $\xi(s) = s^2I$. 
 
 Define-se índice de observabilidade $\nu$ como os graus dos polinômios da matriz
 $P(s)$. E \textit{observability index} como o maior grau.
@@ -57,20 +52,20 @@ Dado um modelo de referência descrito como:
 y_M(t) = M(s)r(t),
 \end{equation}
 %
-onde $M(s) = \text{diag}\left\{\frac{1}{s+a_i}\right\}$ é uma matriz diagonal
-com polinômios estáveis e mônicos, e $r(t) \in \mathbb{R}^n$ é a entrada do sistema
+onde $M(s) = \text{diag}\left\{\frac{1}{(s+a_i)(s+\lambda)}\right\}$ é uma
+matriz diagonal com polinômios estáveis e mônicos, e $r(t) \in \mathbb{R}^n$ é a entrada do sistema
 MIMO, sinal limitado. O objetivo é encontrar uma lei de controle $u(t)$ tal que
 todo o sistema de malha fechada produza sinais limitados e a saída da planta
 $y(t)$ rastreie assintoticamente o modelo de referência $y_M(t)$. A estrutura
 exige algumas premissas:
 \begin{enumerate}
   	\item Os zeros de $P(s)$ tem parte real negativa;
-  	\item $P(s)$ tem posto completo e grau relativo 1;
+  	\item $P(s)$ tem posto completo e grau relativo 2;
   	\item O \textit{Observability index} de $P(s)$ é conhecido;
   	\item Os sinais dos menores principais líderes da matriz $K_p$ são
   	conhecidos.
-	\item O modelo de referencia é dado por uma função de transferência $P_M(s)$
-que é SPR.
+	\item O modelo de referencia é dado por uma função de transferência $P_M(s)$. E
+	$M(s)L(s)$ é SPR, onde $L(s) = (s+\lambda)I$.
 \end{enumerate}
 
 É possível provar que existe uma fatoração SDU não única de $K_p$ (notas de
@@ -88,7 +83,7 @@ filtro é descrito pela realização de estados:
 Observe que agora $B_\lambda$ é matriz para o caso MIMO. Podemos, então,
 formular a equação do erro:
 
-\begin{align}
+\begin{align}\label{eq:erro}
 e &= M(s)K_p\left[u-\theta^{*\intercal}\omega\right] \\
 \nonumber &= M(s)SD \left[Uu - U\theta_1^{*\intercal}\omega_1 -
 U\theta_2^{*\intercal}\omega_2 - U\theta_3^{*\intercal}y -
@@ -147,47 +142,33 @@ A nova estrutura MIMO MRAC pode ser vista na figura~\ref{mrac}.
   \label{mrac} 
 \end{figure}
 
-Comparando com o caso SISO, $\text{sign}(D)$ substitui $\text{sign}(K_p)$ e a
-nova lei de controle é $u = \Omega^\intercal\Theta$. Porém temos que garantir a
-condição $M(s)S$ SPR. Temos que $M(s)S$ é SPR $\iff AP+PA=-2Q<0$ e $PS=I$,
-onde $\{A,B,C\}$ é uma realização de $M(s)S$. Para o caso $n^* = 1$, temos:
-
-\begin{align}
-M(s) &= \begin{bmatrix}
-\frac{1}{s+a_1} & 0\\
-0 & \frac{1}{s+a_2}
-\end{bmatrix} \\
-\nonumber A &= \begin{bmatrix}
--a_1 & 0\\
-0 & -a_2
-\end{bmatrix}
+Utilizando o algoritmo de Monopoli, temos:
+\begin{align}\label{eq:monopoli}
+e &= \left[M(s)S\right]DL(s)L^{-1}(s)\left[u-\Omega^\intercal\Theta^*\right] \\
+&=
+\left[M(s)L(s)S\right]D\left[L^{-1}(s)u-L^{-1}(s)\Omega^\intercal\Theta^*\right]
+\\
+u &= L(s)\chi
 \end{align}
 
-Se $a_1 = a_2 = a$, então $M(s)S = \frac{1}{s+a}S$. 
-
+Escolhmos:
 \begin{align}
-P = S^{-1} &= (L_pD_+L_p^\intercal)^{-1} = \begin{bmatrix}
-d_1 & d_1l_1\\
-d_1l_1 & d_2+d_1l_1^2
-\end{bmatrix}^{-1} = \begin{bmatrix}
-\frac{1}{d_1}+\frac{l_1^2}{d_2} & -\frac{l_1}{d_2} \\
--\frac{l_1}{d_2} & \frac{1}{d_2}
-\end{bmatrix}
+\chi &= \zeta^\intercal\Omega \\
+u &= \Omega^\intercal\Omega +
+\zeta^\intercal\dot{\Omega}
 \end{align}
 
+Como no caso $n^*=1$, é possível provar que para todo modelo de referência
+$M(s)$ existe $D_+$ tal que $M(s)L(s)S = M(s)L(s)L_1D_+L_1^\intercal$ é SPR.
+Escolhendo a função de Lyapunov:
 \begin{align}
-Q &= - \frac{PA+AP}{2} = \begin{bmatrix}
-\frac{a}{d_1}+\frac{al_1^2}{d_2} & -\frac{l_1a}{d_2}\\
--\frac{l_1}{d_2} & \frac{a}{d_2}
-\end{bmatrix}\\
-\nonumber \text{det}(Q) &= -\frac{a^2}{d_1d_2}
+2V &= z^\intercal P_Mz+\tilde{\Theta}^\intercal|D|\Gamma^{-1}\tilde{\Theta}
 \end{align}
-%
-Portanto, $Q<0$ para todo S. Igual ao caso SISO (notas de aula), por Lyapunov
+
 podemos chegar na lei de adaptação:
 
 \begin{equation}
-\dot{\Theta}(t) = -\textrm{sign}[D] \, \Gamma \, \Omega(t) \, e(t),
+\dot{\Theta}(t) = -\text{sign}[D] \, \Gamma \, \zeta \, e(t),
 \end{equation}
 
 onde  $D = \text{diag}\left\{ d_1I_1, d)2I_2, \ldots , d_mI_m\right\}$
@@ -195,8 +176,14 @@ onde  $D = \text{diag}\left\{ d_1I_1, d)2I_2, \ldots , d_mI_m\right\}$
 o erro converge assintoticamente para zero, em que $\Gamma =
 \Gamma^\intercal > 0$ é uma matriz de ganhos positiva definida.
 
+Observe que ainda falta analisar a estabilidade de $L(s)$. Nas notas de aula,
+pode-se verificar a prova completa com a segunda lei de Lyapunov:
+\begin{align}
+V_L(z,\epsilon,\tilde{\Theta}) = V +\alpha\epsilon^\intercal P_1\epsilon
+\end{align}
+
 Neste trabalho, serão consideradas plantas de primeira e segunda ordens com grau
-relativo 1 ($n^*=1$). Iremos simular e discutir o comportamento do erro e das
+relativo 2 ($n^*=2$). Iremos simular e discutir o comportamento do erro e das
 saídas para variações das condições iniciais dos parâmetros estimados
 ($\theta(0)$) e da planta ($y(0)$), do ganho de adaptação $\Gamma$ e para
 diferentes parâmetros da planta e modelo.
