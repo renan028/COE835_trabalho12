@@ -1,7 +1,7 @@
 clear;
 clc;
 close all;
-global a1 a2 w1 w2 L;
+global a1 a2 w1 w2;
 
 PRINT = true;
 % PRINT = false;
@@ -9,7 +9,7 @@ PRINT = true;
 %% 1nd order system
 
 %Simulation time
-tfinal = 50;
+tfinal = 20;
 
 %Reference
 w1 = [0.63493 4.5669];
@@ -20,38 +20,45 @@ a2 = [1 1];
 %--------------- First set of parameters ----------------
 
 %P
-Np_1 = {[1 3],[2 0];[-2 -4], [1 3]};
-Dp_1 = {[1 0 -1],[1 0 -1];[1 0 -1],[1 0 -1]};
+phi_1 = pi/4;
+h_1 = 1;
+Np_1 = [1 0;0 1];
+Dp_1 = [1 0 0];
+kp_1 = [cos(phi_1) sin(phi_1);-h_1*sin(phi_1) h_1*cos(phi_1)];
 
 %Pm
-km_1 = [2 1];
-Nm_1 = {[km_1(1)], [0];[0], [km_1(2)]};
-Dm_1 = {[1 2], [1];[1], [1 1]};
+lambda_1 = 1;
+Nm_1 = [lambda_1^2 0;0 lambda_1^2];
+Dm_1 = [1 2*lambda_1 lambda_1^2];
 
-% Filtro 
-L = [1 1];
+%L
+lambda_f = 1;
+L = [1 lambda_f];
 
 %Initial conditions
 y0_1  = 0;
 
 %Adaptation gain
-gamma_1 = 20;
+gamma_1 = 100;
 
 %--------------- Second set of parameters ----------------
 
 %P
-Np_2 = {[1 2],[1 0];[-1 -2], [1 2]};
-Dp_2 = {[1 -2 1],[1 -2 1];[1 -2 1],[1 -2 1]};
+phi_2 = pi/3;
+h_2 = 2;
+Np_2 = [1 0;0 1];
+Dp_2 = [1 0 0];
+kp_2 = [cos(phi_2) sin(phi_2);-h_1*sin(phi_2) h_1*cos(phi_2)];
 
 %Pm
-km_2 = [1 1];
-Nm_2 = {[km_2(1)], [0];[0], [km_2(2)]};
-Dm_2 = {[1 1], [1];[1], [1 1]};
+lambda_2 = 2;
+Nm_2 = [lambda_2^2 0;0 lambda_2^2];
+Dm_2 = [1 2*lambda_2 lambda_2^2];
 
 %Initial conditions
 y0_2  = 10;
 
 %Adaptation gain
-gamma_2 = 5;
+gamma_2 = 20;
 
 run sim_mrac.m;

@@ -12,7 +12,7 @@
 %                                                        30/abr/13, Rio
 %----------------------------------------------------------------------
 
-global sysP sysM sysL lambda gamma;
+global sysP sysM sysL gamma;
 
 sim_str = 'sim0';
 % options = odeset('OutputFcn','odeplot');
